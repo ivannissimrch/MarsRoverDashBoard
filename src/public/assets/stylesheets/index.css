@@ -3,22 +3,54 @@
 body {
   display: flex;
   flex-direction: column;
-  font-family: Arial;
-  min-height: 100vh;
-}
-
-header {
-  /* header styles */
+  font-family: Arial;   
+  margin: 0px;
 }
 
 main {
   flex: 1;
-  padding: 20px;
+  padding: 0px;     
 }
 
-footer {
-  /* footer styles */
+
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
+.buttons{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+}
+
+button{
+  height: 150px;
+    width: 150px ;
+    border-radius: 200px;
+    background: rgba(30, 52, 142, 0.7);
+    color: white;
+    font-size: 20px;
+    margin: 20px;
+}
+
+.main-section{
+  min-height: 100vh; 
+  background-image: url('./images/Mars.jpg');
+  background-position:center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.rover1{
+  min-height: 100vh;
+
+}
+
+
 
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {

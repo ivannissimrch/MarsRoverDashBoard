@@ -1,105 +1,134 @@
+function test(){
+  alert('tseting buuton click event');
+}
+
+//1  object storage for aplication data
 let store = {
-    user: { name: "Student" },
-    apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-}
+  user: { name: "Student" },
+  apod: "",
+  rovers: ['opportunity', 'curiosity', 'spirit']
+};
+//2 store root div on variable to append html components
+const root = document.getElementById("root");
 
-// add our markup to the page
-const root = document.getElementById('root')
 
+//9 function to update storage
 const updateStore = (store, newState) => {
-    store = Object.assign(store, newState)
-    render(root, store)
-}
+  store = Object.assign(store, newState);
+  console.log(store.rovers.spiritData.photos[0].rover)
+  render(root, store);
+};
 
+// 4 assing the value of the function App to our root innerHTM
 const render = async (root, state) => {
-    root.innerHTML = App(state)
-}
+  root.innerHTML = App(state);
+};
 
-
-// create content
+// 5 create content
 const App = (state) => {
-    let { rovers, apod } = state
+  let { rovers, apod } = state;
 
-    return `
-        <header></header>
-        <main>
-            ${Greeting(store.user.name)}
-            <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
-                <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
-                ${ImageOfTheDay(apod)}
-            </section>
-        </main>
-        <footer></footer>
-    `
-}
+  return `        
+        <section class='main-section'>
+        <header> <h1>Mars Rovers</h1>        
+        </header>
+         <div class = 'buttons'>
+         <button  onclick = "test()">Opportunity</button>
+         <button>Curiosity</button>
+         <button id='spiritButton'>Spirit</button>
+         </div>           
+        </section>
+        <section class = 'rover1'>
+      
+        </section>
+    `;
+};
 
-// listening for load event because page should load before any JS is called
-window.addEventListener('load', () => {  
-     render(root, store)
-})
+// 3 listening for load event because page should load before any JS is called
+window.addEventListener("load", () => {
+  
+  getSpiritData(store)
+  render(root, store); 
+  // const spiritButton = document.getElementById('spiritButton');
+  // spiritButton.addEventListener('click', function(){
+  //   console.log('clicked');
+  // });
+ 
+});
 
-// ------------------------------------------------------  COMPONENTS
+
+//6 & 7 ------------------------------------------------------  COMPONENTS
 
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
+// const Greeting = (name) => {
+//   if (name) {
+//     return `
+//             <h1>Welcome, ${name}!</h1>
+//         `;
+//   }
 
-    return `
-        <h1>Hello!</h1>
-    `
-}
+//   return `
+//         <h1>Hello!</h1>
+//     `;
+// };
 
-// Example of a pure function that renders infomation requested from the backend
+// 7 Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
-
-    // If image does not already exist, or it is not from today -- request it again
-    const today = new Date()
-    const photodate = new Date(apod.date)
-    console.log(photodate.getDate(), today.getDate());
-
-    console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate() ) {
-        getImageOfTheDay(store)
-    }
-
+  // If image does not already exist, or it is not from today -- request it again
+    //const today = new Date();   
+    //const photodate = new Date(apod.image);
+    //console.log(apod.image.explanation)    
+  if (!apod || apod === "") {
+    getImageOfTheDay(store);
+  } else {
     // check if the photo of the day is actually type video!
     if (apod.media_type === "video") {
-        return (`
+      return `
             <p>See today's featured video <a href="${apod.url}">here</a></p>
             <p>${apod.title}</p>
             <p>${apod.explanation}</p>
-        `)
+        `;
     } else {
-        return (`
+      return `
             <img src="${apod.image.url}" height="350px" width="100%" />
             <p>${apod.image.explanation}</p>
-        `)
+        `;
     }
-}
+  }
+};
 
-// ------------------------------------------------------  API CALLS
-
-// Example API call
+// 8------------------------------------------------------  API CALLS
 const getImageOfTheDay = (state) => {
-    let { apod } = state
+  let { apod } = state;
 
-    fetch(`http://localhost:3000/apod`)
-        .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+  const data = fetch(`http://localhost:3000/apod`)
+    .then((res) => res.json())
+    .then((apod) => updateStore(store, { apod }));
+};
 
-    return data
-}
+//get request to curiosity route
+const getCuriosityData = (state) => {
+  let { rovers } = state;
+    console.log(rovers)
+  const data = fetch(`http://localhost:3000/opportunity`)
+    .then((res) => res.json())   
+    .then((rovers) => updateStore(store, { rovers }));
+};
+
+//get request to oportunity route
+const getOportunityData = (state) => {
+  let { rovers } = state;
+    console.log(rovers)
+  const data = fetch(`http://localhost:3000/oportunity`)
+    .then((res) => res.json())   
+    .then((rovers) => updateStore(store, { rovers }));
+};
+
+//get request to spirit route
+const getSpiritData = (state) => {
+  let { rovers } = state;
+    console.log(rovers)
+  const data = fetch(`http://localhost:3000/spirit`)
+    .then((res) => res.json())   
+    .then((rovers) => updateStore(store, { rovers }));
+};
