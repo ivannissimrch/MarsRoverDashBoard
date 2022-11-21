@@ -1,23 +1,18 @@
-function test(){
-  alert('tseting buuton click event');
-}
-
 //1  object storage for aplication data
+//I think I should use inmmutable js in here but my code keep breaking when I aply inmmutable here and in my 
+//update store function.
 let store = {
   user: { name: "Student" },
   apod: "",
-  rovers: ['opportunity', 'curiosity', 'spirit']
+  rovers: [],
 };
 //2 store root div on variable to append html components
 const root = document.getElementById("root");
 
-
-//9 function to update storage
-const updateStore = (store, newState) => {
-  store = Object.assign(store, newState);
-  console.log(store.rovers.spiritData.photos[0].rover)
+// 3 listening for load event because page should load before any JS is called
+window.addEventListener("load", () => {
   render(root, store);
-};
+});
 
 // 4 assing the value of the function App to our root innerHTM
 const render = async (root, state) => {
@@ -27,108 +22,153 @@ const render = async (root, state) => {
 // 5 create content
 const App = (state) => {
   let { rovers, apod } = state;
-
-  return `        
-        <section class='main-section'>
-        <header> <h1>Mars Rovers</h1>        
-        </header>
-         <div class = 'buttons'>
-         <button  onclick = "test()">Opportunity</button>
-         <button>Curiosity</button>
-         <button id='spiritButton'>Spirit</button>
-         </div>           
-        </section>
-        <section class = 'rover1'>
-      
-        </section>
-    `;
-};
-
-// 3 listening for load event because page should load before any JS is called
-window.addEventListener("load", () => {
-  
-  getSpiritData(store)
-  render(root, store); 
-  // const spiritButton = document.getElementById('spiritButton');
-  // spiritButton.addEventListener('click', function(){
-  //   console.log('clicked');
-  // });
- 
-});
-
-
-//6 & 7 ------------------------------------------------------  COMPONENTS
-
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-// const Greeting = (name) => {
-//   if (name) {
-//     return `
-//             <h1>Welcome, ${name}!</h1>
-//         `;
-//   }
-
-//   return `
-//         <h1>Hello!</h1>
-//     `;
-// };
-
-// 7 Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {
-  // If image does not already exist, or it is not from today -- request it again
-    //const today = new Date();   
-    //const photodate = new Date(apod.image);
-    //console.log(apod.image.explanation)    
-  if (!apod || apod === "") {
-    getImageOfTheDay(store);
+  console.log(rovers);
+  if (rovers.length === 0) {
+    return `<section class='main-section'>
+    <header> <h1>Mars Rovers</h1>        
+    </header>
+     <div class = 'buttons'>
+     <button  onclick = "getOpportunityData(store)">Opportunity</button>
+     <button onclick = "getCuriosityData(store)">Curiosity</button>
+     <button onclick = "getSpiritData(store)">Spirit</button>
+     </div>           
+    </section>`;
   } else {
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
+    if (rovers.opportunityData) {
       return `
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `;
-    } else {
+    <section class='main-section'>
+    <header> <h1>Mars Rovers</h1>        
+    </header>
+     <div class = 'buttons'>
+     <button  onclick = "getOpportunityData(store)">Opportunity</button>
+     <button onclick = "getCuriosityData(store)">Curiosity</button>
+     <button onclick = "getSpiritData(store)">Spirit</button>
+     </div>           
+    <section class= 'results'>    
+    <h1>Rover Name : ${rovers.opportunityData.photos[0].rover.name}</h1>
+    <h2>Landing Date :${rovers.opportunityData.photos[0].rover.landing_date}</h2>
+    <h2>Launch Date :${rovers.opportunityData.photos[0].rover.launch_date}</h2>
+    <h2>Status :${rovers.opportunityData.photos[0].rover.status}</h2>   
+   </section>
+   
+   <section class = 'results-images'>
+   <section class='image-title-section'>
+   <h2>Picture Date :${rovers.opportunityData.photos[0].earth_date}</h2>
+   <img src='${rovers.opportunityData.photos[0].img_src}' ></img>  
+   </section> 
+   <section class='image-title-section'>
+   <h2>Picture Date :${rovers.opportunityData.photos[1].earth_date}</h2>
+   <img src='${rovers.opportunityData.photos[1].img_src}' ></img>  
+   </section> 
+   <section class='image-title-section'>
+   <h2>Picture Date :${rovers.opportunityData.photos[2].earth_date}</h2>
+   <img src='${rovers.opportunityData.photos[2].img_src}' ></img>  
+   </section> 
+   
+   </section>
+   </section>`;
+    } else if (rovers.curiosityData) {
       return `
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `;
+   <section class='main-section'>
+   <header> <h1>Mars Rovers</h1>        
+   </header>
+    <div class = 'buttons'>
+    <button  onclick = "getOpportunityData(store)">Opportunity</button>
+    <button onclick = "getCuriosityData(store)">Curiosity</button>
+    <button onclick = "getSpiritData(store)">Spirit</button>
+    </div>           
+   <section class= 'results'>    
+   <h1>Rover Name : ${rovers.curiosityData.photos[0].rover.name}</h1>
+   <h2>Landing Date :${rovers.curiosityData.photos[0].rover.landing_date}</h2>
+   <h2>Launch Date :${rovers.curiosityData.photos[0].rover.launch_date}</h2>
+   <h2>Status :${rovers.curiosityData.photos[0].rover.status}</h2>   
+  </section>
+  
+  <section class = 'results-images'>
+  <section class='image-title-section'>
+  <h2>Picture Date :${rovers.curiosityData.photos[0].earth_date}</h2>
+  <img src='${rovers.curiosityData.photos[0].img_src}' ></img>  
+  </section> 
+  <section class='image-title-section'>
+  <h2>Picture Date :${rovers.curiosityData.photos[1].earth_date}</h2>
+  <img src='${rovers.curiosityData.photos[1].img_src}' ></img>  
+  </section> 
+  <section class='image-title-section'>
+  <h2>Picture Date :${rovers.curiosityData.photos[2].earth_date}</h2>
+  <img src='${rovers.curiosityData.photos[2].img_src}' ></img> 
+  
+  </section> 
+  
+  </section>
+  </section>`;
+    } else if (rovers.spiritData) {
+      return `
+    <section class='main-section'>
+    <header> <h1>Mars Rovers</h1>        
+    </header>
+     <div class = 'buttons'>
+     <button  onclick = "getOpportunityData(store)">Opportunity</button>
+     <button onclick = "getCuriosityData(store)">Curiosity</button>
+     <button onclick = "getSpiritData(store)">Spirit</button>
+     </div>           
+    <section class= 'results'>    
+    <h1>Rover Name : ${rovers.spiritData.photos[0].rover.name}</h1>
+    <h2>Landing Date :${rovers.spiritData.photos[0].rover.landing_date}</h2>
+    <h2>Launch Date :${rovers.spiritData.photos[0].rover.launch_date}</h2>
+    <h2>Status :${rovers.spiritData.photos[0].rover.status}</h2>   
+   </section>
+   
+   <section class = 'results-images'>
+   <section class='image-title-section'>
+   <h2>Picture Date :${rovers.spiritData.photos[0].earth_date}</h2>
+   <img src='${rovers.spiritData.photos[0].img_src}' ></img>  
+   </section> 
+   <section class='image-title-section'>
+   <h2>Picture Date :${rovers.spiritData.photos[1].earth_date}</h2>
+   <img src='${rovers.spiritData.photos[1].img_src}' ></img>  
+   </section> 
+   <section class='image-title-section'>
+   <h2>Picture Date :${rovers.spiritData.photos[2].earth_date}</h2>
+   <img src='${rovers.spiritData.photos[2].img_src}' ></img>  
+   </section> 
+   
+   </section>
+   </section>`;
     }
   }
 };
 
-// 8------------------------------------------------------  API CALLS
-const getImageOfTheDay = (state) => {
-  let { apod } = state;
+//9 function to update storage
+const updateStore = (store, newState) => {
+  store = Object.assign(store, newState);
+  console.log(store);
+  render(root, store);
+};
 
-  const data = fetch(`http://localhost:3000/apod`)
+// 8------------------------------------------------------  API CALLS
+
+//get request to oportunity route
+const getOpportunityData = (state) => {
+  let { rovers } = state;
+  fetch(`http://localhost:3000/opportunity`)
     .then((res) => res.json())
-    .then((apod) => updateStore(store, { apod }));
+    .then((rovers) => updateStore(store, { rovers }));
 };
 
 //get request to curiosity route
 const getCuriosityData = (state) => {
   let { rovers } = state;
-    console.log(rovers)
-  const data = fetch(`http://localhost:3000/opportunity`)
-    .then((res) => res.json())   
-    .then((rovers) => updateStore(store, { rovers }));
-};
-
-//get request to oportunity route
-const getOportunityData = (state) => {
-  let { rovers } = state;
-    console.log(rovers)
-  const data = fetch(`http://localhost:3000/oportunity`)
-    .then((res) => res.json())   
+  console.log(rovers);
+  const data = fetch(`http://localhost:3000/curiosity`)
+    .then((res) => res.json())
     .then((rovers) => updateStore(store, { rovers }));
 };
 
 //get request to spirit route
 const getSpiritData = (state) => {
   let { rovers } = state;
-    console.log(rovers)
+  console.log(rovers);
   const data = fetch(`http://localhost:3000/spirit`)
-    .then((res) => res.json())   
+    .then((res) => res.json())
     .then((rovers) => updateStore(store, { rovers }));
 };
