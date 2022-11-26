@@ -1,11 +1,12 @@
 //1  object storage for aplication data
-//I think I should use inmmutable js in here but my code keep breaking when I aply inmmutable here and in my 
-//update store function.
-let store = {
-  user: { name: "Student" },
-  apod: "",
-  rovers: [],
+let store = Immutable.Map({});
+
+//9 function to update storage
+const updateStore = (state, newState) => {
+  store = state.merge(newState);
+  render(root, store);
 };
+
 //2 store root div on variable to append html components
 const root = document.getElementById("root");
 
@@ -21,9 +22,7 @@ const render = async (root, state) => {
 
 // 5 create content
 const App = (state) => {
-  let { rovers, apod } = state;
-  console.log(rovers);
-  if (rovers.length === 0) {
+  if (state.get("data") === undefined) {
     return `<section class='main-section'>
     <header> <h1>Mars Rovers</h1>        
     </header>
@@ -34,8 +33,8 @@ const App = (state) => {
      </div>           
     </section>`;
   } else {
-    if (rovers.opportunityData) {
-      return `
+    const newData = state.toJS();
+    return `
     <section class='main-section'>
     <header> <h1>Mars Rovers</h1>        
     </header>
@@ -45,130 +44,98 @@ const App = (state) => {
      <button onclick = "getSpiritData(store)">Spirit</button>
      </div>           
     <section class= 'results'>    
-    <h1>Rover Name : ${rovers.opportunityData.photos[0].rover.name}</h1>
-    <h2>Landing Date :${rovers.opportunityData.photos[0].rover.landing_date}</h2>
-    <h2>Launch Date :${rovers.opportunityData.photos[0].rover.launch_date}</h2>
-    <h2>Status :${rovers.opportunityData.photos[0].rover.status}</h2>   
-   </section>
-   
+    <h1>Rover Name : ${newData.data[0].name}</h1>
+    <h2>Landing Date :${newData.data[0].landingDate}</h2>
+    <h2>Launch Date :${newData.data[0].launchDate}</h2>
+    <h2>Status :${newData.data[0].status}</h2>   
+   </section>   
    <section class = 'results-images'>
    <section class='image-title-section'>
-   <h2>Picture Date :${rovers.opportunityData.photos[0].earth_date}</h2>
-   <img src='${rovers.opportunityData.photos[0].img_src}' ></img>  
+   <h2>Picture Date :${newData.data[0].earthDate}</h2>
+   <img src='${newData.data[0].photos}' ></img>  
    </section> 
    <section class='image-title-section'>
-   <h2>Picture Date :${rovers.opportunityData.photos[1].earth_date}</h2>
-   <img src='${rovers.opportunityData.photos[1].img_src}' ></img>  
+   <h2>Picture Date :${newData.data[1].earthDate}</h2>
+   <img src='${newData.data[1].photos}' ></img>  
    </section> 
    <section class='image-title-section'>
-   <h2>Picture Date :${rovers.opportunityData.photos[2].earth_date}</h2>
-   <img src='${rovers.opportunityData.photos[2].img_src}' ></img>  
-   </section> 
-   
+   <h2>Picture Date :${newData.data[2].earthDate}</h2>
+   <img src='${newData.data[2].photos}' ></img>  
+   </section>   
    </section>
    </section>`;
-    } else if (rovers.curiosityData) {
-      return `
-   <section class='main-section'>
-   <header> <h1>Mars Rovers</h1>        
-   </header>
-    <div class = 'buttons'>
-    <button  onclick = "getOpportunityData(store)">Opportunity</button>
-    <button onclick = "getCuriosityData(store)">Curiosity</button>
-    <button onclick = "getSpiritData(store)">Spirit</button>
-    </div>           
-   <section class= 'results'>    
-   <h1>Rover Name : ${rovers.curiosityData.photos[0].rover.name}</h1>
-   <h2>Landing Date :${rovers.curiosityData.photos[0].rover.landing_date}</h2>
-   <h2>Launch Date :${rovers.curiosityData.photos[0].rover.launch_date}</h2>
-   <h2>Status :${rovers.curiosityData.photos[0].rover.status}</h2>   
-  </section>
-  
-  <section class = 'results-images'>
-  <section class='image-title-section'>
-  <h2>Picture Date :${rovers.curiosityData.photos[0].earth_date}</h2>
-  <img src='${rovers.curiosityData.photos[0].img_src}' ></img>  
-  </section> 
-  <section class='image-title-section'>
-  <h2>Picture Date :${rovers.curiosityData.photos[1].earth_date}</h2>
-  <img src='${rovers.curiosityData.photos[1].img_src}' ></img>  
-  </section> 
-  <section class='image-title-section'>
-  <h2>Picture Date :${rovers.curiosityData.photos[2].earth_date}</h2>
-  <img src='${rovers.curiosityData.photos[2].img_src}' ></img> 
-  
-  </section> 
-  
-  </section>
-  </section>`;
-    } else if (rovers.spiritData) {
-      return `
-    <section class='main-section'>
-    <header> <h1>Mars Rovers</h1>        
-    </header>
-     <div class = 'buttons'>
-     <button  onclick = "getOpportunityData(store)">Opportunity</button>
-     <button onclick = "getCuriosityData(store)">Curiosity</button>
-     <button onclick = "getSpiritData(store)">Spirit</button>
-     </div>           
-    <section class= 'results'>    
-    <h1>Rover Name : ${rovers.spiritData.photos[0].rover.name}</h1>
-    <h2>Landing Date :${rovers.spiritData.photos[0].rover.landing_date}</h2>
-    <h2>Launch Date :${rovers.spiritData.photos[0].rover.launch_date}</h2>
-    <h2>Status :${rovers.spiritData.photos[0].rover.status}</h2>   
-   </section>
-   
-   <section class = 'results-images'>
-   <section class='image-title-section'>
-   <h2>Picture Date :${rovers.spiritData.photos[0].earth_date}</h2>
-   <img src='${rovers.spiritData.photos[0].img_src}' ></img>  
-   </section> 
-   <section class='image-title-section'>
-   <h2>Picture Date :${rovers.spiritData.photos[1].earth_date}</h2>
-   <img src='${rovers.spiritData.photos[1].img_src}' ></img>  
-   </section> 
-   <section class='image-title-section'>
-   <h2>Picture Date :${rovers.spiritData.photos[2].earth_date}</h2>
-   <img src='${rovers.spiritData.photos[2].img_src}' ></img>  
-   </section> 
-   
-   </section>
-   </section>`;
-    }
   }
-};
-
-//9 function to update storage
-const updateStore = (store, newState) => {
-  store = Object.assign(store, newState);
-  console.log(store);
-  render(root, store);
 };
 
 // 8------------------------------------------------------  API CALLS
 
 //get request to oportunity route
 const getOpportunityData = (state) => {
-  let { rovers } = state;
-  fetch(`http://localhost:3000/opportunity`)
+  const data = fetch(`http://localhost:3000/opportunity`)
     .then((res) => res.json())
-    .then((rovers) => updateStore(store, { rovers }));
+    .then((rovers) => {
+      const roverData = rovers.opportunityData.photos;
+      const selectedData = roverData.map((item) => {
+        const roverInfo = {};
+        {
+          (roverInfo["name"] = item.rover.name),
+            (roverInfo["landingDate"] = item.rover.landing_date),
+            (roverInfo["launchDate"] = item.rover.launch_date),
+            (roverInfo["status"] = item.rover.status),
+            (roverInfo["earthDate"] = item.earth_date),
+            (roverInfo["photos"] = item.img_src);
+        }
+        return roverInfo;
+      });
+      const newObject = { data: selectedData };
+      updateStore(state, newObject);
+    });
 };
 
 //get request to curiosity route
 const getCuriosityData = (state) => {
-  let { rovers } = state;
-  console.log(rovers);
   const data = fetch(`http://localhost:3000/curiosity`)
     .then((res) => res.json())
-    .then((rovers) => updateStore(store, { rovers }));
+    .then((rovers) => {
+      console.log(rovers.curiosityData.photos);
+      const roverData = rovers.curiosityData.photos;
+      const selectedData = roverData.map((item) => {
+        const roverInfo = {};
+        {
+          (roverInfo["name"] = item.rover.name),
+            (roverInfo["landingDate"] = item.rover.landing_date),
+            (roverInfo["launchDate"] = item.rover.launch_date),
+            (roverInfo["status"] = item.rover.status),
+            (roverInfo["earthDate"] = item.earth_date),
+            (roverInfo["photos"] = item.img_src);
+        }
+        return roverInfo;
+      });
+      const newObject = { data: selectedData };
+      updateStore(state, newObject);
+    });
 };
 
 //get request to spirit route
 const getSpiritData = (state) => {
-  let { rovers } = state;
-  console.log(rovers);
   const data = fetch(`http://localhost:3000/spirit`)
     .then((res) => res.json())
-    .then((rovers) => updateStore(store, { rovers }));
+    .then((rovers) => {
+      console.log(rovers.spiritData.photos);
+      const roverData = rovers.spiritData.photos;
+      const selectedData = roverData.map((item) => {
+        const roverInfo = {};
+        {
+          (roverInfo["name"] = item.rover.name),
+            (roverInfo["landingDate"] = item.rover.landing_date),
+            (roverInfo["launchDate"] = item.rover.launch_date),
+            (roverInfo["status"] = item.rover.status),
+            (roverInfo["earthDate"] = item.earth_date),
+            (roverInfo["photos"] = item.img_src);
+        }
+        return roverInfo;
+      });
+      const newObject = { data: selectedData };
+      updateStore(state, newObject);
+    });
 };

@@ -41,7 +41,7 @@ button{
 
 .main-section{
   min-height: 100vh; 
-  background-image: url('./images/Mars.jpg');
+  background-image:url('./images/Mars.jpg');
   background-position:center;
   background-size: cover;
   background-repeat: no-repeat;

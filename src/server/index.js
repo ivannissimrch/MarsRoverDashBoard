@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
 const path = require("path");
-const { Recoverable } = require("repl");
+
 
 const app = express();
 const port = 3000;
@@ -31,7 +31,7 @@ app.get("/apod", async (req, res) => {
 app.get("/curiosity", async (req, res) => {
   try {
     let curiosityData = await fetch(
-      `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?api_key=${process.env.API_KEY}&sol=1000`
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?api_key=${process.env.API_KEY}`
     ).then((res) => res.json());
     res.send({ curiosityData });
   } catch (err) {
@@ -43,7 +43,7 @@ app.get("/curiosity", async (req, res) => {
 app.get("/opportunity", async (req, res) => {
   try {
     let opportunityData = await fetch(
-      `https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?api_key=${process.env.API_KEY}&sol=1000`
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?api_key=${process.env.API_KEY}`
     ).then((res) => res.json());
     res.send({ opportunityData });
   } catch (err) {
@@ -55,7 +55,7 @@ app.get("/opportunity", async (req, res) => {
 app.get("/spirit", async (req, res) => {
   try {
     let spiritData = await fetch(
-      `https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?api_key=${process.env.API_KEY}&sol=1000`
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?api_key=${process.env.API_KEY}`
     ).then((res) => res.json());
     res.send({ spiritData });
   } catch (err) {
