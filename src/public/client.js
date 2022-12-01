@@ -1,7 +1,7 @@
-//1  object storage for aplication data
-let store = Immutable.Map({data: 'noInfo'});
+//  object storage for aplication data
+let store = Immutable.Map({ rovers: "noInfo", rover: Immutable.List(["no"]) });
 
-//7 function to update storage
+// function to update storage
 const updateStore = (state, newState) => {
   store = state.merge(newState);
   render(root, store);
@@ -10,157 +10,106 @@ const updateStore = (state, newState) => {
 //2 store root div on variable to append html components
 const root = document.getElementById("root");
 
-// 3 listening for load event because page should load before any JS is called
-window.addEventListener("load", () => {
-  render(root, store);
-});
-
-// 4 assing the value of the function App to our root innerHTM
+// 3 assing the value of the function App to our root innerHTM
 const render = async (root, state) => {
   root.innerHTML = App(state);
 };
 
+// 4 listening for load event because page should load before any JS is called
+window.addEventListener("load", () => {
+  render(root, store);
+});
+
 // 5 create content
 const App = (state) => {
-  if (state.get("data") === 'noInfo') {
+  if (state.getIn(["rovers"]) === "noInfo") {
     return `<section class='main-section'>
     <header> <h1>Mars Rovers</h1>        
     </header>
     ${addButtons()}
     </section>`;
   } else {
-    const newData = state.toJS();    
     return `
     <section class='main-section'>
     <header> <h1>Mars Rovers</h1>        
     </header>
     ${addButtons()}
-    ${addRoverInfo(newData)}
+    ${selectRover(state, displayRoverInfo)}
+    ${selectRover(state, displayRoverImage)}
    </section>`;
   }
 };
 
 // 6------------------------------------------------------  API CALLS
 
-//get request to oportunity route
-const getOpportunityData = (state) => {
-  const data = fetch(`http://localhost:3000/opportunity`)
+//get any Rover data
+const getRoverData = (state, id) => {  
+  let { rovers } = state;
+  const data = fetch(`http://localhost:3000/${id}`)
     .then((res) => res.json())
-    .then((rovers) => {
-      //store array of objects recived from API on roverData. make a copy using map and create and object, return that object to variable
-      // selectedData and use it to set the values on  the key data inside  newObject,
-      // pass newObject to updateStore function.
-      //Doing this will prevent each updateStore call to add diferent key values to store object, that way I can eliminate the need of if staments
-      //to select wicth rover data to display on App()  
-      const roverData = rovers.opportunityData.photos;
-      const selectedData = roverData.map((item) => {
-        const roverInfo = {};
-        {
-          (roverInfo["name"] = item.rover.name),
-            (roverInfo["landingDate"] = item.rover.landing_date),
-            (roverInfo["launchDate"] = item.rover.launch_date),
-            (roverInfo["status"] = item.rover.status),
-            (roverInfo["earthDate"] = item.earth_date),
-            (roverInfo["photos"] = item.img_src);
-        }        
-        return roverInfo;
-      });
-      const newObject = { data: selectedData };
-      updateStore(state, newObject);
-    });
+    .then((rovers) => updateStore(state, { rovers }));
 };
-
-//get request to curiosity route
-const getCuriosityData = (state) => {
-  const data = fetch(`http://localhost:3000/curiosity`)
-    .then((res) => res.json())
-    .then((rovers) => {      
-     //store array of objects recived from API on roverData. make a copy using map and create and object, return that object to variable
-      // selectedData and use it to set the values on  the key data inside  newObject,
-      // pass newObject to updateStore function.
-      //Doing this will prevent each updateStore call to add diferent key values to store object, that way I can eliminate the need of if staments
-      //to select wicth rover data to display on App() 
-      const roverData = rovers.curiosityData.photos;      
-      const selectedData = roverData.map((item) => {
-        const roverInfo = {};
-        {
-          (roverInfo["name"] = item.rover.name),
-            (roverInfo["landingDate"] = item.rover.landing_date),
-            (roverInfo["launchDate"] = item.rover.launch_date),
-            (roverInfo["status"] = item.rover.status),
-            (roverInfo["earthDate"] = item.earth_date),
-            (roverInfo["photos"] = item.img_src);
-        }
-        return roverInfo;
-      });      
-      const newObject = { data: selectedData };      
-      updateStore(state, newObject);
-    });
-};
-
-//get request to spirit route
-const getSpiritData = (state) => {
-  const data = fetch(`http://localhost:3000/spirit`)
-    .then((res) => res.json())
-    .then((rovers) => {
-      //store array of objects recived from API on roverData. make a copy using map and create and object, return that object to variable
-      // selectedData and use it to set the values on  the key data inside  newObject,
-      // pass newObject to updateStore function.
-      //Doing this will prevent each updateStore call to add diferent key values to store object, that way I can eliminate the need of if staments
-      //to select wicth rover data to display on App() 
-      const roverData = rovers.spiritData.photos;
-      const selectedData = roverData.map((item) => {
-        const roverInfo = {};
-        {
-          (roverInfo["name"] = item.rover.name),
-            (roverInfo["landingDate"] = item.rover.landing_date),
-            (roverInfo["launchDate"] = item.rover.launch_date),
-            (roverInfo["status"] = item.rover.status),
-            (roverInfo["earthDate"] = item.earth_date),
-            (roverInfo["photos"] = item.img_src);
-        }
-        return roverInfo;
-      });
-      const newObject = { data: selectedData };
-      updateStore(state, newObject);
-    });
-};
-
 
 //Create content functions
-function addButtons(){
-  return` <div class = 'buttons'>
-  <button  onclick = "getOpportunityData(store)">Opportunity</button>
-  <button onclick = "getCuriosityData(store)">Curiosity</button>
-  <button onclick = "getSpiritData(store)">Spirit</button>
-  </div>           `
-}
+const addButtons = () => {
+  return ` <div class = 'buttons'>
+  <button id='opportunity' onclick = "getRoverData(store,this.id)">Opportunity</button>
+  <button id='curiosity' onclick = "getRoverData(store,this.id)">Curiosity</button>
+  <button  id='spirit' onclick = "getRoverData(store,this.id)">Spirit</button>
+  </div> `;
+};
 
-function addRoverInfo(rover){
+const selectRover = (state, displayInfo) => {
+  let roverDataArray = [];
+  if (state.getIn(["rovers", "curiosityData", "photos"])) {
+    roverDataArray = state.getIn(["rovers", "curiosityData", "photos"]);
+  } else if (state.getIn(["rovers", "opportunityData", "photos"])) {
+    roverDataArray = state.getIn(["rovers", "opportunityData", "photos"]);
+  } else if (state.getIn(["rovers", "spiritData", "photos"])) {
+    roverDataArray = state.getIn(["rovers", "spiritData", "photos"]);
+  }
+
+  const selectedData = roverDataArray.map((item) => {
+    const roverInfo = {};
+    {
+      (roverInfo["name"] = item.rover.name),
+        (roverInfo["landingDate"] = item.rover.landing_date),
+        (roverInfo["launchDate"] = item.rover.launch_date),
+        (roverInfo["status"] = item.rover.status),
+        (roverInfo["earthDate"] = item.earth_date),
+        (roverInfo["photos"] = item.img_src);
+    }
+    return roverInfo;
+  });
+
+  return displayInfo(selectedData);
+};
+
+const displayRoverInfo = (rover) => {
   return `<section class= 'results'> 
+  <h1>Rover Name : ${rover[0].name}</h1>
+  <h2>Landing Date :${rover[0].landingDate}</h2>
+  <h2>Launch Date :${rover[0].launchDate}</h2>
+  <h2>Status :${rover[0].status}</h2>   
+ </section> `;
+};
 
-  <h1>Rover Name : ${rover.data[0].name}</h1>
-  <h2>Landing Date :${rover.data[0].landingDate}</h2>
-  <h2>Launch Date :${rover.data[0].launchDate}</h2>
-  <h2>Status :${rover.data[0].status}</h2>   
- </section>   
-
- <section class = 'results-images'>
+const displayRoverImage = (rover) => {
+  return `<section class = 'results-images'>
  <section class='image-title-section'>
- <h2>Picture Date :${rover.data[0].earthDate}</h2>
- <img src='${rover.data[0].photos}' ></img>  
+ <h2>Picture Date :${rover[0].earthDate}</h2>
+ <img src='${rover[0].photos}' ></img>  
  </section> 
 
  <section class='image-title-section'>
- <h2>Picture Date :${rover.data[1].earthDate}</h2>
- <img src='${rover.data[1].photos}' ></img>  
+ <h2>Picture Date :${rover[1].earthDate}</h2>
+ <img src='${rover[1].photos}' ></img>  
  </section> 
 
  <section class='image-title-section'>
- <h2>Picture Date :${rover.data[2].earthDate}</h2>
- <img src='${rover.data[2].photos}' ></img>  
+ <h2>Picture Date :${rover[2].earthDate}</h2>
+ <img src='${rover[2].photos}' ></img>  
  </section> 
 
- </section>`
-
-}
+ </section>`;
+};
