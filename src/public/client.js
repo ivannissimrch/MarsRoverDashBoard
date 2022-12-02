@@ -3,7 +3,7 @@ let store = Immutable.Map({ rovers: "noInfo", rover: Immutable.List(["no"]) });
 
 // function to update storage
 const updateStore = (state, newState) => {
-  store = state.merge(newState);
+  store = state.merge(newState);  
   render(root, store);
 };
 
@@ -47,7 +47,10 @@ const getRoverData = (state, id) => {
   let { rovers } = state;
   const data = fetch(`http://localhost:3000/${id}`)
     .then((res) => res.json())
-    .then((rovers) => updateStore(state, { rovers }));
+    .then((rovers) => updateStore(state, { rovers }))
+    .catch(function() {
+      console.log("error");
+  })
 };
 
 //Create content functions
@@ -60,13 +63,13 @@ const addButtons = () => {
 };
 
 const selectRover = (state, displayInfo) => {
-  let roverDataArray = [];
-  if (state.getIn(["rovers", "curiosityData", "photos"])) {
-    roverDataArray = state.getIn(["rovers", "curiosityData", "photos"]);
-  } else if (state.getIn(["rovers", "opportunityData", "photos"])) {
-    roverDataArray = state.getIn(["rovers", "opportunityData", "photos"]);
-  } else if (state.getIn(["rovers", "spiritData", "photos"])) {
-    roverDataArray = state.getIn(["rovers", "spiritData", "photos"]);
+  let roverDataArray = [];  
+  if (state.getIn(["rovers", "curiosityData", "latest_photos"])) {
+    roverDataArray = state.getIn(["rovers", "curiosityData", "latest_photos"]);
+  } else if (state.getIn(["rovers", "opportunityData", "latest_photos"])) {
+    roverDataArray = state.getIn(["rovers", "opportunityData", "latest_photos"]);
+  } else if (state.getIn(["rovers", "spiritData", "latest_photos"])) {
+    roverDataArray = state.getIn(["rovers", "spiritData", "latest_photos"]);
   }
 
   const selectedData = roverDataArray.map((item) => {
@@ -94,22 +97,13 @@ const displayRoverInfo = (rover) => {
  </section> `;
 };
 
-const displayRoverImage = (rover) => {
+const displayRoverImage = (rover) => {  
   return `<section class = 'results-images'>
  <section class='image-title-section'>
- <h2>Picture Date :${rover[0].earthDate}</h2>
- <img src='${rover[0].photos}' ></img>  
+ <h2>Latest Pictures Date :${rover[0].earthDate}</h2>
+ ${rover.map(item => `<img src='${item.photos}' ></img>`)} 
  </section> 
-
- <section class='image-title-section'>
- <h2>Picture Date :${rover[1].earthDate}</h2>
- <img src='${rover[1].photos}' ></img>  
- </section> 
-
- <section class='image-title-section'>
- <h2>Picture Date :${rover[2].earthDate}</h2>
- <img src='${rover[2].photos}' ></img>  
- </section> 
-
  </section>`;
 };
+
+

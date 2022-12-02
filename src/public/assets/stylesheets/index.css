@@ -5,6 +5,7 @@ body {
   flex-direction: column;
   font-family: Arial;   
   margin: 0px;
+  background-color: black;
   
 }
 
@@ -40,7 +41,8 @@ button{
 }
 
 .main-section{
-  min-height: 100vh; 
+  min-height: 100vh;
+  max-height: 200vh;
   background-image:url('./images/Mars.jpg');
   background-position:center;
   background-size: cover;
