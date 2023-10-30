@@ -3,6 +3,5 @@
 
 ![ScreenShot](/screenShot/preview.png)
 
-### Retrive information for each rover
-this app retrive information and 3 pictures for 3 Mar rovers, Click an any of the 3 rovers you would like to see the info and the 
-app display rover nam, landind date, status, and 3 pictures taken for each rover.
+### Retrieve information for each rover
+This project is a part of the Udacity JavaScript Nano Degree program. The application fetches information and three pictures for each of the three Mars rovers. You can select any of the three rovers to view their respective data, which includes the rover's name, landing date, status, and three pictures taken by the rover.
